@@ -1,0 +1,261 @@
+
+
+//std::vector<std::vector<cv::Point>> CVesselAnalysisDlg::MakeCandidateList(cv::Mat endImage, cv::Mat bgImage)
+//{
+//	cv::Mat label;
+//	int num_label = cv::connectedComponents(bgImage, label, 8);
+//	std::vector<cv::Point> candidate_list, tmp_return_list;
+//	std::vector<std::vector<cv::Point>> return_list;
+//	bool continue_check;
+//	int check = 0;
+//	double distance, ratio, min_distance, tmp_min_distance, cur_distance;
+//	cv::Point polar, base, tmp;
+//	int base_label, cur_label, color, comp_color;
+//	
+//
+//
+//	/*cv::imshow("dd", bgImage);
+//	cv::waitKey(0);*/
+//	for (int y = 0; y<endImage.rows; y++)
+//		for (int x = 0; x < endImage.cols; x++)
+//		{
+//			if (endImage.at<uchar>(y, x) > 200)
+//				candidate_list.push_back(cv::Point(x, y));
+//		}
+//
+//	std::sort(candidate_list.begin(), candidate_list.end(), cmp);
+//
+//	for (int idx = 0; idx < candidate_list.size(); idx++)
+//	{
+//		min_distance = INT_MAX;
+//		base_label = label.at<int>(candidate_list[idx]);
+//		tmp_return_list.push_back(candidate_list[idx]);
+//		
+//		for (int comp = 1; comp < candidate_list.size(); comp++)
+//		{
+//			continue_check = false;
+//			if (idx == comp) {
+//				continue_check = true;
+//				continue;
+//			}
+//			cur_label = label.at<int>(candidate_list[comp]);
+//			distance = cv::norm(candidate_list[idx] - candidate_list[comp]);
+//			
+//			if (distance < 70 && base_label!=cur_label)
+//			{
+//				if (distance < min_distance) {
+//					min_distance = distance;
+//				}
+//				tmp_return_list.push_back(candidate_list[comp]);
+//			}
+//		}
+//		if (continue_check == false) {
+//			if (min_distance > 70) {
+//				min_distance = 70;
+//				
+//			}
+//			tmp_min_distance = 70;
+//			tmp = cv::Point(-50, -50);
+//			for (int x = -int(min_distance / 2); x<int(min_distance / 2); x++)
+//				for (int y = -int(min_distance / 2); y <int(min_distance / 2); y++) {
+//					if (tmp_return_list[0].y + y > label.rows - 1 || tmp_return_list[0].y + y < 1 || tmp_return_list[0].x + x < 1 || tmp_return_list[0].x + x >label.cols - 1)
+//						continue;
+//					if (label.at<int>(tmp_return_list[0].y + y, tmp_return_list[0].x + x) > 0) {
+//						cur_distance = cv::norm(tmp_return_list[0] - cv::Point(tmp_return_list[0].x + x, tmp_return_list[0].y + y));
+//						if ((cur_distance <= tmp_min_distance) && (label.at<int>(tmp_return_list[0].y + y, tmp_return_list[0].x + x) != base_label)) {
+//							tmp_min_distance = cur_distance;
+//							tmp = cv::Point(tmp_return_list[0].x + x, tmp_return_list[0].y + y);
+//
+//						}
+//					}
+//
+//				}
+//			if (tmp.y > 0)
+//			{
+//				tmp_return_list.push_back(tmp);
+//			}
+//			return_list.push_back(tmp_return_list);
+//			tmp_return_list.clear();
+//		}
+//	}
+//	/*cv::imshow("dd", bgImage);
+//	cv::waitKey(0);*/
+//	return return_list;
+//}
+
+//void CvesselAnalysisDlg::OnBnClickedButtonStep()
+//{
+//	if (IDC_RADIO_step1 + m_AV_enable == IDC_RADIO_step1)
+//	{
+//		if (!m_AV_exitence) {
+//			SetSplitImg(m_cur_edited_mask);
+//			cv::imwrite(Afn, m_cur_Amap);
+//			cv::imwrite(Vfn, m_cur_Vmap);
+//			std::vector<cv::Mat> bgr;
+//			cv::Mat threshold_mat;
+//			cv::split(m_cur_edited_mask, bgr);
+//
+//			bgr[0] = m_cur_Vmap;
+//			bgr[1] = bgr[1] > 125;
+//			bgr[2] = m_cur_Amap;
+//			threshold_mat = cv::Mat::zeros(m_cur_edited_mask.size(), CV_8UC3);
+//			cv::merge(bgr, threshold_mat);
+//			cv::imwrite("tmp_centerline.png", threshold_mat);
+//		}
+//		else {
+//			m_cur_Amap = cv::imread(Afn, CV_LOAD_IMAGE_GRAYSCALE);
+//			m_cur_Vmap = cv::imread(Vfn, CV_LOAD_IMAGE_GRAYSCALE);
+//		}
+//		endp(m_cur_Vmap, m_cur_VmapendP);
+//		endp(m_cur_Amap, m_cur_AmapendP);
+//		m_cur_Vview = cv::Mat::zeros(m_cur_img.size(), CV_8UC3);
+//		m_cur_Aview = cv::Mat::zeros(m_cur_img.size(), CV_8UC3);
+//		candidate_list.clear();
+//		candidate_list = MakeCandidateList(m_cur_AmapendP, m_cur_Amap);
+//		//AutoConnect(m_cur_AmapendP, m_cur_mask, pair_AendPoint);
+//		for (int i = 0; i < m_cur_AmapendP.rows; i++)
+//		{
+//			for (int j = 0; j < m_cur_AmapendP.cols; j++)
+//			{
+//				if (m_cur_VmapendP.at<uchar>(i, j) == 255)
+//					cv::circle(m_cur_Vview, cv::Point(j, i), 2, cv::Scalar(255, 255, 255), 1);
+//				if (m_cur_AmapendP.at<uchar>(i, j) == 255)
+//					cv::circle(m_cur_Aview, cv::Point(j, i), 2, cv::Scalar(255, 255, 255), 1);
+//			}
+//		}
+//		for (int i = 0; i < pair_AendPoint.size(); i = i + 2)
+//		{
+//			cv::line(m_cur_Aview, pair_AendPoint[i], pair_AendPoint[i + 1], cv::Scalar(0, 0, 255), 1);
+//		}
+//		m_AV_enable = 1;
+//		CheckRadioButton(IDC_RADIO_step1, IDC_RADIO_step3, IDC_RADIO_step2);
+//		
+//	}
+//	else if (IDC_RADIO_step1 + m_AV_enable == IDC_RADIO_step2) {
+//		//AutoConnect(m_cur_VmapendP, m_cur_mask, pair_VendPoint);
+//		candidate_list.clear();
+//		candidate_list = MakeCandidateList(m_cur_AmapendP, m_cur_Amap);
+//		for (int i = 0; i < pair_VendPoint.size(); i = i + 2)
+//		{
+//			cv::line(m_cur_Vview, pair_VendPoint[i], pair_VendPoint[i + 1], cv::Scalar(255, 0, 0), 1);
+//		}
+//		m_AV_enable = 2;
+//		CheckRadioButton(IDC_RADIO_step1, IDC_RADIO_step3, IDC_RADIO_step3);
+//		OnPaint();
+//		
+//	}
+//	else if (IDC_RADIO_step1 + m_AV_enable == IDC_RADIO_step3) {
+//		OnBnClickedButtonNextImage();
+//		candidate_list.clear();
+//		m_AV_enable = 0;
+//		OnPaint();
+//		CheckRadioButton(IDC_RADIO_step1, IDC_RADIO_step3, IDC_RADIO_step1);
+//	}
+//	
+//
+//}
+
+
+void CVesselAnalysisDlg::AutoConnect(cv::Mat endImage, cv::Mat bgImage, std::vector<cv::Point>& pair_list)
+{
+	std::vector<cv::Point> candidate_list;
+	int check = 0;
+	double distance, ratio, theta;
+	cv::Vec3b color, comp_color;
+	cv::Point polar, base, tmp;
+
+	/*cv::imshow("dd", bgImage);
+	cv::waitKey(0);*/
+	for(int y = 0; y<endImage.rows; y++)
+		for (int x = 0; x < endImage.cols; x++)
+		{
+			if (endImage.at<uchar>(y, x) > 200)
+				candidate_list.push_back(cv::Point(x, y));
+		}
+	
+	std::sort(candidate_list.begin(), candidate_list.end(), cmp);
+
+	for (int idx = 0; idx < candidate_list.size(); idx++)
+	{
+		for (int comp = idx + 1; comp < candidate_list.size(); comp++)
+		{
+			
+			distance = cv::norm(candidate_list[idx]-candidate_list[comp]);
+			if (distance < 30)
+			{
+				/*cv::line(bgImage, candidate_list[idx], candidate_list[comp], cv::Scalar(255, 255, 255), 20);*/
+				//not branch
+				bool dupli = false;
+				
+				color = bgImage.at<cv::Vec3b>(candidate_list[idx]);
+				/*printf("%d, %d, %d		", color[0], color[1], color[2]);*/
+				/*int r = bgImage.at<uchar>(candidate_list[idx].y, candidate_list[idx].x * 3 + 2);
+				int g = bgImage.at<uchar>(candidate_list[idx].y, candidate_list[idx].x * 3 + 0);
+				int b = bgImage.at<uchar>(candidate_list[idx].y, candidate_list[idx].x * 3 + 1);
+				
+				
+				cv::circle(bgImage, candidate_list[idx], 1, cv::Scalar(255, 255, 255), 1);
+				/*cv::imshow("dd", bgImage); 
+				cv::waitKey(0);*/
+				//theta mean rad
+				color = cv::Vec3b(255, 0, 255) - color;
+				theta = acos((candidate_list[comp].x - candidate_list[idx].x) / distance);
+				polar = cv::Point(int(distance*cos(theta)), int(distance*sin(theta)));
+				/*if (candidate_list[idx].y > candidate_list[comp].y)
+				{
+					base = cv::Point(candidate_list[idx].x + polar.x, candidate_list[idx].y - polar.y);
+					
+				}
+				else {
+					base = cv::Point(candidate_list[idx].x + polar.x, candidate_list[idx].y + polar.y);
+				}*/
+			
+				/*cv::line(bgImage, candidate_list[idx] , base, cv::Scalar(255, 255, 255), 1);*/
+				check = 0;
+				for (int line = 0; line < distance; line++)
+				{
+					tmp = cv::Point(line*cos(theta), line*sin(theta));
+					
+					if (candidate_list[idx].y > candidate_list[comp].y)
+					{
+						base = cv::Point(candidate_list[idx].x + tmp.x, candidate_list[idx].y - tmp.y);
+
+					}
+					else {
+						base = cv::Point(candidate_list[idx].x + tmp.x, candidate_list[idx].y + tmp.y);
+					}
+ 					
+					comp_color = bgImage.at<cv::Vec3b>(base);
+					/*cv::circle(bgImage, base, 1, cv::Vec3b(255, 255, 255), 1);*/
+					if (comp_color == color)
+						check += 1;
+				}
+				//printf("%d, %d, %d, %d, %f\n", candidate_list[idx].x, candidate_list[idx].y, candidate_list[idx].x + polar.x, candidate_list[idx].y + polar.y,check / distance);
+				if (check / distance < 0.65)
+					break;
+				for (int dup = 0; dup < pair_list.size(); dup++)
+				{
+					if (pair_list[dup] == candidate_list[idx])
+					{
+						dupli = true;
+					}
+					if (pair_list[dup] == candidate_list[comp])
+					{
+						dupli = true;
+					}
+				}
+				if (dupli == false)
+				{
+					
+					pair_list.push_back(candidate_list[idx]);
+					pair_list.push_back(candidate_list[comp]);
+				}
+
+
+			}
+		}
+	}
+	/*cv::imshow("dd", bgImage);
+	cv::waitKey(0);*/
+
+}
