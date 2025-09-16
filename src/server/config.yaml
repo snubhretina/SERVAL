@@ -1,0 +1,40 @@
+path:
+  serval_log_root_path: "./SERVAL_RESULT_ver_2"
+  server_log_folder: "server_log"
+  error_report_folder: "error_report"
+  result: "users"
+  
+  root_result_folder: "result"
+  fundus_img_folder: "1_fundus"
+  init_av_mask_folder: "2_AV_mask"
+  result_folder: "3_result"
+
+  disc_info_folder: "disc_info"
+  elapsed_time_folder: "elapsed_time"
+  mask_folder: "mask"
+  metric_folder: "metric"
+  ROI_mask_folder: "ROI_mask"
+
+error:
+  error_limit: 10
+
+file:
+  csv_metric_file: 'csv_metric_result.csv'
+  csv_error_file: 'csv_report.csv'
+
+server:
+  host: '192.168.10.28'
+  port: 33000
+  packet_size: 4096
+
+model:
+  HVGN_cnn_path: "./model/HVGN/cnn_model_14600_iter_loss_0.2504_acc_0.8856.pth.tar"
+  HVGN_gnn_path: "./model/HVGN/gnn_model_14600_iter_loss_0.2504_acc_0.8856.pth.tar"
+  HVGN_gpu: 'cuda:0'
+
+  SSAnet_path: "./model/SSA/Fundus/model_17000_iter_loss_41718.0631.pth.tar"
+  SSAnet_gpu: 'cuda:1'
+
+  Fastrcnn_path: "./model/FastRCNN/12.pth"
+
+  
