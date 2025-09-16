@@ -10,4 +10,3 @@
 github link : https://github.com/snubhretina/SSANet
 ### Artery/Vein Classification
 github link : https://github.com/snubhretina/Dual-HVGN
-
