@@ -1,3 +1,3 @@
-# serval
+# SERVAL
 
 SERVAL : SEoul Retinal Vessel Assessment Library
